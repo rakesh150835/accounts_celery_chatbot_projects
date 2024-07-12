@@ -1,0 +1,96 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+
+<head> 
+	<meta charset="UTF-8"> 
+	<meta name="viewport" content= 
+		"width=device-width, initial-scale=1.0"> 
+	<style> 
+		.chat-container { 
+			max-width: 600px; 
+			margin: 50px auto; 
+			background-color: #fff; 
+			border-radius: 8px; 
+			overflow: hidden; 
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
+		} 
+
+		.message-container { 
+			display: flex; 
+			flex-direction: column; 
+		} 
+
+		.message { 
+			padding: 10px; 
+			margin: 10px; 
+			border-radius: 5px; 
+			max-width: 80%; 
+			word-wrap: break-word; 
+			
+			align-items: center; 
+		} 
+
+		.sender-message { 
+			background-color: #e0e0e0; 
+			color: #000; 
+			align-self: flex-end; 
+		} 
+
+		.receiver-message { 
+			background-color: #2d4029; 
+			color: #fff; 
+			align-self: flex-start;
+		} 
+
+
+		.message input { 
+			width: calc(100% - 20px); 
+			padding: 8px; 
+			margin: 10px; 
+			border: 1px solid #ddd; 
+			border-radius: 5px; 
+		} 
+
+		.message button { 
+			padding: 8px; 
+			margin: 10px; 
+			background-color: #4CAF50; 
+			color: #fff; 
+			border: none; 
+			border-radius: 5px; 
+			cursor: pointer; 
+		} 
+	</style> 
+	<title>Chat Template UI using HTML and CSS</title> 
+</head> 
+
+<body> 
+	<div class="chat-container"> 
+        <div class="message"> 
+            
+            <form method="post">
+                {% csrf_token %}
+			        {{ form }}
+
+                <center><button type="submit">Send</button> </center>
+            </form>
+
+			
+		</div> 
+        
+		<div class="message-container">
+            {% for message in messages %} 
+                <div class="message sender-message"> 
+                    {{ message.message }} 
+                </div> 
+                <div class="message receiver-message"> 
+                    {{ message.response }} 
+                </div>  
+            {% endfor %}
+		</div> 
+
+		
+	</div> 
+</body> 
+
+</html>

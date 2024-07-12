@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Bot</title>
+    <style>
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+
+    <h1>Chat with AI Model</h1> specialized in cricket
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.as_p }}
+
+        <button type="submit">Send</button>
+    </form>
+
+    <h2>Chat History</h2>
+    <div id="chat-history">
+        {% for message in messages %}
+            <p><strong>You:</strong> {{ message.message }}</p>
+            <p><strong>Bot:</strong> {{ message.response }}</p>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>
