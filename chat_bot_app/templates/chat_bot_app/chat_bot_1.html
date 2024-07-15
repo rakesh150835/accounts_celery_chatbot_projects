@@ -60,19 +60,25 @@
 			border-radius: 5px; 
 			cursor: pointer; 
 		} 
+		
 	</style> 
 	<title>Chat Template UI using HTML and CSS</title> 
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	
 </head> 
 
 <body> 
 	<div class="chat-container"> 
         <div class="message"> 
             
-            <form method="post">
+            <form action="{% url 'chat_view' %}" method="POST" id="input-form">
                 {% csrf_token %}
-			        {{ form }}
+				<input type="text" id="speech-input" class="input-field" name="query" placeholder="Type or speak your query..."> 
+			
+					<button id="start-button" class="button">speak to chat</button>
+					<button id="stop-button" class="button stop-button">stop speaking</button>
 
-                <center><button type="submit">Send</button> </center>
+                <button type="submit">Send</button>
             </form>
 
 			
@@ -91,6 +97,66 @@
 
 		
 	</div> 
+
+
+	<script>
+
+		const speechInput = document.getElementById('speech-input');
+		const startButton = document.getElementById('start-button');
+        const stopButton = document.getElementById('stop-button');
+
+		const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.continuous = true; 
+
+        recognition.onresult = function(event) {
+            const transcript = event.results[event.resultIndex][0].transcript;
+            speechInput.value += transcript + ' ';
+        };
+
+        startButton.addEventListener('click', () => {
+            recognition.start();
+            startButton.disabled = true;
+            stopButton.disabled = false;
+        });
+
+        stopButton.addEventListener('click', () => {
+            recognition.stop();
+            startButton.disabled = false;
+            stopButton.disabled = true;
+        });
+
+		
+			$(document).ready(function() {
+				$('#input-form').submit(function(event) {
+					event.preventDefault();  
+					
+					// Get user input
+					var userInput = $('#speech-input').val();
+					
+					// AJAX request
+					$.ajax({
+						type: 'POST',
+						url: '/chatbot/chatbot_ajax/',  // URL to your Django view
+						data: {
+							'input_text': userInput,
+							'csrfmiddlewaretoken': '{{ csrf_token }}'  // CSRF token for security
+						},
+						dataType: 'json',
+						success: function(data) {
+							// Update chat interface with response
+							$('.sender-message').innerHTML = userInput;
+							$('.receiver-message').innerHTML = data.response;
+							$('#speech-input').val('');  
+						}
+					});
+				});
+			});
+		
+
+	</script>
+
 </body> 
 
 </html>
