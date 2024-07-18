@@ -19,7 +19,10 @@ class RegisterSerailizer(serializers.ModelSerializer):
         
         return validated_data
     
-    
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        # The post_save signal will be triggered here
+        return user
     
 
 

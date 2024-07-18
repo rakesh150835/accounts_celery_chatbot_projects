@@ -7,15 +7,6 @@ from .utils import get_response_from_model
 
 
 def chat_view(request):
-    if request.method == 'POST':
-        user_message = request.POST.get('query')
-        if user_message is not None:
-        
-            bot_response = get_response_from_model(user_message)
-
-            Message.objects.create(user=request.user, message=user_message, response=bot_response)
-            return redirect('chat_view')
-    
     messages = Message.objects.filter(user=request.user).order_by('-timestamp')
     
     context = {
@@ -28,7 +19,7 @@ def chat_view(request):
 
 def chatbot_ajax(request):
     if request.method == 'POST':
-        user_message = request.POST.get('query')
+        user_message = request.POST.get('input_text')
 
         if user_message is not None:
             bot_response = get_response_from_model(user_message)
@@ -38,5 +29,9 @@ def chatbot_ajax(request):
             data = {
                 'response': bot_response,
             }
-            
+            print(JsonResponse(data))
             return JsonResponse(data)
+        else:
+            print("user message is none: ", user_message)
+    else:
+        print("request method is not post")

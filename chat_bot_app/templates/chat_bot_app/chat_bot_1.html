@@ -5,6 +5,7 @@
 	<meta charset="UTF-8"> 
 	<meta name="viewport" content= 
 		"width=device-width, initial-scale=1.0"> 
+
 	<style> 
 		.chat-container { 
 			max-width: 600px; 
@@ -60,8 +61,13 @@
 			border-radius: 5px; 
 			cursor: pointer; 
 		} 
+		.typing-indicator {
+            font-style: italic;
+            color: #054a14;
+        }
 		
 	</style> 
+
 	<title>Chat Template UI using HTML and CSS</title> 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	
@@ -128,31 +134,35 @@
         });
 
 		
-			$(document).ready(function() {
-				$('#input-form').submit(function(event) {
-					event.preventDefault();  
-					
-					// Get user input
-					var userInput = $('#speech-input').val();
-					
-					// AJAX request
-					$.ajax({
-						type: 'POST',
-						url: '/chatbot/chatbot_ajax/',  // URL to your Django view
-						data: {
-							'input_text': userInput,
-							'csrfmiddlewaretoken': '{{ csrf_token }}'  // CSRF token for security
-						},
-						dataType: 'json',
-						success: function(data) {
-							// Update chat interface with response
-							$('.sender-message').innerHTML = userInput;
-							$('.receiver-message').innerHTML = data.response;
-							$('#speech-input').val('');  
-						}
-					});
+		$(document).ready(function() {
+
+			$('#input-form').submit(function(event) {
+				event.preventDefault();  
+				
+				var userInput = $('#speech-input').val();
+				$('#speech-input').val(''); 
+				
+				$('.message-container').prepend('<div class="typing-indicator" id="typing-indicator"><center>Bot is responding...</center></div>');
+				
+				
+				$.ajax({
+					type: 'POST',
+					url: '/chatbot/chatbot_ajax/',  // URL to your Django view
+					data: {
+						'input_text': userInput,
+						'csrfmiddlewaretoken': '{{ csrf_token }}' 
+					},
+					dataType: 'json',
+					success: function(data) {
+						$('#typing-indicator').remove();
+
+						// Update chat interface with response
+						$('.message-container').prepend('<div class="message receiver-message">' + data.response + '</div>');
+						$('.message-container').prepend('<div class="message sender-message">' + userInput + '</div>');
+					}
 				});
 			});
+		});
 		
 
 	</script>
